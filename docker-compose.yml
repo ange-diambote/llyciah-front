@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:4
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    command: mongod --oplogSize 128 --replSet rs0
+  mongo-init-replica:
+    image: mongo:4
+    container_name: mongo_replica
+    restart: on-failure
+    command: 'mongo mongo/rocketchat --eval "printjson(rs.initiate())"'
+    depends_on:
+      - mongo
+  rocket:
+    image: rocket.chat
+    depends_on:
+      - mongo
+    container_name: rocket
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - ROOT_URL=http://localhost:3000
+      - MONGO_URL=mongodb://mongo:27017/rocketchat
+      - MONGO_OPLOG_URL=mongodb://mongo:27017/local?replSet=rs0
