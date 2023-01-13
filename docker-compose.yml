@@ -21,9 +21,9 @@ services:
     container_name: rocket
     restart: unless-stopped
     ports:
-      - "4949:4949"
+      - "80:80"
     environment:
-      - PORT=4949
-      - ROOT_URL=http://localhost:4949
+      - PORT=80
+      - ROOT_URL=http://localhost:80
       - MONGO_URL=mongodb://mongo:27017/rocketchat
       - MONGO_OPLOG_URL=mongodb://mongo:27017/local?replSet=rs0
